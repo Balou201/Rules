@@ -7,88 +7,67 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
     <style>
-        /* Configuration personnalisée de Tailwind */
+        /* Configuration personnalisée de Tailwind et variables CSS pour les thèmes */
         :root {
-            --primary-light: #7289da; /* Discord blue */
-            --primary-dark: #5865f2; /* Deeper Discord blue */
-            --bg-light: #f7f9fc;
-            --bg-dark: #1e2124; /* Discord dark background */
-            --card-light: #ffffff;
-            --card-dark: #2f3136; /* Discord card background */
-            --text-light: #333333;
-            --text-dark: #dcddde;
-            --border-light: #e0e0e0;
-            --border-dark: #40444b;
+            --primary-light: #7289da; /* Bleu Discord classique */
+            --primary-dark: #5865f2; /* Bleu Discord plus profond */
+            --bg-light: #f7f9fc;    /* Arrière-plan clair */
+            --bg-dark: #1e2124;     /* Arrière-plan sombre Discord */
+            --card-light: #ffffff;  /* Fond de carte clair */
+            --card-dark: #2f3136;   /* Fond de carte sombre Discord */
+            --text-light: #333333;  /* Texte clair */
+            --text-dark: #dcddde;   /* Texte sombre */
+            --border-light: #e0e0e0;/* Bordure claire */
+            --border-dark: #40444b; /* Bordure sombre */
         }
 
-        /* Thème clair par défaut (pour le cas où JS est désactivé ou pour le flash initial) */
+        /* Thème clair par défaut (s'applique si pas de classe 'dark' sur <html>) */
         .light {
             background-color: var(--bg-light);
             color: var(--text-light);
         }
-        .light .bg-card {
-            background-color: var(--card-light);
-        }
-        .light .text-primary {
-            color: var(--primary-light);
-        }
-        .light .text-secondary {
-            color: var(--primary-dark);
-        }
-        .light .border-section {
-            border-color: var(--border-light);
-        }
-        .light .rule-header {
-            background-color: #f1f3f4; /* Light gray for rule header background */
-        }
-        .light .rule-description-wrapper {
-            background-color: #fcfcfc; /* Slightly lighter than card for content */
-        }
+        .light .bg-card { background-color: var(--card-light); }
+        .light .text-primary { color: var(--primary-light); }
+        .light .text-secondary { color: var(--primary-dark); }
+        .light .border-section { border-color: var(--border-light); }
+        .light .rule-header { background-color: #f1f3f4; } /* Arrière-plan des en-têtes de règle */
+        .light .rule-description-wrapper { background-color: #fcfcfc; } /* Arrière-plan du contenu de règle */
 
-        /* Thème sombre */
+        /* Thème sombre (s'applique si la classe 'dark' est présente sur <html>) */
         .dark {
             background-color: var(--bg-dark);
             color: var(--text-dark);
         }
-        .dark .bg-card {
-            background-color: var(--card-dark);
-        }
-        .dark .text-primary {
-            color: var(--primary-light);
-        }
-        .dark .text-secondary {
-            color: var(--primary-dark);
-        }
-        .dark .border-section {
-            border-color: var(--border-dark);
-        }
-        .dark .rule-header {
-            background-color: #3b3d42; /* Darker gray for rule header background */
-        }
-        .dark .rule-description-wrapper {
-            background-color: #2a2c30; /* Slightly lighter than card for content */
-        }
+        .dark .bg-card { background-color: var(--card-dark); }
+        .dark .text-primary { color: var(--primary-light); }
+        .dark .text-secondary { color: var(--primary-dark); }
+        .dark .border-section { border-color: var(--border-dark); }
+        .dark .rule-header { background-color: #3b3d42; }
+        .dark .rule-description-wrapper { background-color: #2a2c30; }
 
+        /* Styles généraux pour le corps et le conteneur principal */
         body {
             font-family: 'Inter', sans-serif;
-            transition: background-color 0.3s ease, color 0.3s ease;
-            min-height: 100vh;
+            transition: background-color 0.3s ease, color 0.3s ease; /* Transition douce pour le changement de thème */
+            min-height: 100vh; /* S'assure que le corps prend au moins toute la hauteur de la fenêtre */
             display: flex;
             flex-direction: column;
             align-items: center;
-            padding: 2rem 0;
+            padding: 2rem 0; /* Espacement vertical autour du contenu */
         }
         .container {
-            max-width: 900px;
-            width: 95%;
+            max-width: 900px; /* Largeur maximale du conteneur */
+            width: 95%; /* S'adapte à la largeur de la fenêtre */
         }
+
+        /* Styles spécifiques aux titres et emojis */
         h1 .emoji {
             font-size: 1.1em;
             margin-right: 10px;
         }
         h2 {
-            cursor: pointer; /* Indique que c'est cliquable */
-            user-select: none; /* Empêche la sélection du texte */
+            cursor: pointer; /* Indique que les titres de règle sont cliquables */
+            user-select: none; /* Empêche la sélection de texte lors du clic */
             display: flex;
             align-items: center;
             justify-content: space-between; /* Pour pousser l'icône de flèche à droite */
@@ -96,95 +75,100 @@
         h2 .emoji {
             font-size: 1.6em;
             margin-right: 12px;
-            min-width: 30px;
+            min-width: 30px; /* Assure un alignement uniforme des emojis */
             text-align: center;
         }
+
+        /* Styles pour l'en-tête de chaque règle (partie cliquable) */
         .rule-header {
             padding: 1rem 1.5rem;
             border-radius: 8px;
             transition: background-color 0.2s ease, border-color 0.2s ease;
-            border: 1px solid transparent; /* Pour une transition de bordure plus douce */
+            border: 1px solid transparent; /* Bordure transparente pour une transition douce */
         }
         .rule-header:hover {
             border-color: var(--primary-light); /* Met en évidence au survol */
         }
 
+        /* Styles pour l'icône de flèche dans les en-têtes de règle */
         .arrow-icon {
-            transition: transform 0.3s ease;
+            transition: transform 0.3s ease; /* Animation de rotation */
             font-size: 1.2em;
         }
         .rule-header[aria-expanded="true"] .arrow-icon {
-            transform: rotate(90deg); /* Tourne la flèche quand ouvert */
+            transform: rotate(90deg); /* Tourne la flèche quand la règle est ouverte */
         }
 
+        /* Styles pour le wrapper de la description de règle (partie dépliable) */
         .rule-description-wrapper {
-            max-height: 0;
-            overflow: hidden;
-            transition: max-height 0.4s ease-out, padding 0.4s ease-out; /* Animation pour l'ouverture */
+            max-height: 0; /* Masque le contenu par défaut */
+            overflow: hidden; /* Cache le contenu débordant */
+            transition: max-height 0.4s ease-out, padding 0.4s ease-out; /* Animation pour l'ouverture/fermeture */
             padding: 0 1.5rem; /* Padding horizontal constant */
             border-radius: 0 0 8px 8px; /* Coins arrondis en bas */
-            margin-top: -8px; /* Pour se coller au header */
+            margin-top: -8px; /* Pour que le contenu soit collé à l'en-tête */
             box-shadow: inset 0 3px 6px rgba(0,0,0,0.05); /* Ombre interne discrète */
         }
         .rule-description-wrapper.expanded {
-            max-height: 500px; /* Grande valeur pour couvrir tout le contenu possible */
+            max-height: 500px; /* Valeur suffisante pour afficher tout le contenu */
             padding: 1rem 1.5rem; /* Padding vertical quand ouvert */
-            padding-left: calc(1.5rem + 4px); /* Pour la barre verticale */
+            padding-left: calc(1.5rem + 4px); /* Ajustement pour la barre verticale */
         }
+
+        /* Styles pour la barre verticale à gauche de la description */
         .rule-description {
             position: relative;
         }
         .rule-description::before {
             content: '';
             position: absolute;
-            left: -1.5rem; /* Décalé par rapport au padding du wrapper */
+            left: -1.5rem; /* Positionne la barre par rapport au parent */
             top: 0;
             bottom: 0;
-            width: 4px;
-            background-color: var(--primary-light); /* Couleur de la barre plus visible */
+            width: 4px; /* Largeur de la barre */
+            background-color: var(--primary-light); /* Couleur de la barre */
             border-radius: 2px;
         }
         .rule-description p {
-            margin-bottom: 0; /* Pas de marge en bas du paragraphe interne */
+            margin-bottom: 0; /* Retire la marge inférieure des paragraphes dans la description */
         }
 
-
-        /* Styles pour le bouton "Scroll to Top" */
+        /* Styles pour le bouton "Remonter en haut" */
         #scrollToTopBtn {
-            display: none;
-            position: fixed;
+            display: none; /* Caché par défaut */
+            position: fixed; /* Reste fixe lors du défilement */
             bottom: 20px;
             right: 20px;
-            z-index: 99;
+            z-index: 99; /* Au-dessus des autres éléments */
             font-size: 24px;
             width: 50px;
             height: 50px;
-            border-radius: 50%;
+            border-radius: 50%; /* Bouton rond */
             background-color: var(--primary-light);
             color: white;
             border: none;
             cursor: pointer;
             box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
             transition: background-color 0.3s, transform 0.2s;
-            display: flex;
+            display: flex; /* Utilise flex pour centrer l'icône de flèche */
             justify-content: center;
             align-items: center;
         }
         #scrollToTopBtn:hover {
             background-color: var(--primary-dark);
-            transform: translateY(-2px);
+            transform: translateY(-2px); /* Petit effet de soulèvement au survol */
         }
 
         /* Styles pour le bouton Dark/Light Mode */
         #darkModeToggle {
-            position: fixed;
+            position: fixed; /* Reste fixe */
             top: 20px;
             right: 20px;
-            z-index: 100;
+            z-index: 100; /* Au-dessus de tout */
             background-color: var(--card-light);
             color: var(--text-light);
             border: 1px solid var(--border-light);
-            border-radius: 9999px;
+            border-radius: 9999px; /* Forme de pilule */
             padding: 0.5rem 0.75rem;
             cursor: pointer;
             display: flex;
@@ -194,13 +178,33 @@
             font-weight: 600;
             transition: background-color 0.3s, color 0.3s, border-color 0.3s;
         }
-        .dark #darkModeToggle {
+        .dark #darkModeToggle { /* Styles spécifiques pour le mode sombre */
             background-color: var(--card-dark);
             color: var(--text-dark);
             border-color: var(--border-dark);
         }
         #darkModeToggle:hover {
-            opacity: 0.9;
+            opacity: 0.9; /* Légère transparence au survol */
+        }
+
+        /* Responsive design pour les petits écrans */
+        @media (max-width: 768px) {
+            body { padding: 15px 0; }
+            .container { padding: 25px; margin: 20px auto; border-radius: 10px; }
+            h1 { font-size: 2.2em; gap: 10px; }
+            h2 { font-size: 1.5em; }
+            h2 .emoji { font-size: 1.5em; margin-right: 8px; }
+            .rule-header { padding: 0.8rem 1rem; }
+            .rule-description-wrapper.expanded { padding: 0.8rem 1rem; padding-left: calc(1rem + 4px); }
+            .rule-description::before { left: -1rem; }
+            #darkModeToggle { top: 10px; right: 10px; padding: 0.4rem 0.6rem; font-size: 0.8rem; }
+            #scrollToTopBtn { bottom: 10px; right: 10px; width: 45px; height: 45px; font-size: 20px; }
+        }
+        @media (max-width: 480px) {
+            h1 { font-size: 1.8em; flex-direction: column; gap: 5px; }
+            h1 .emoji { font-size: 1.3em; margin-right: 0; }
+            h2 { font-size: 1.3em; }
+            h2 .emoji { font-size: 1.3em; }
         }
     </style>
 </head>
@@ -369,7 +373,7 @@
     <button id="scrollToTopBtn" aria-label="Remonter en haut de page">⬆️</button>
 
     <script>
-        // DARK MODE TOGGLE (unchanged from previous version)
+        // --- DARK MODE TOGGLE ---
         const darkModeToggle = document.getElementById('darkModeToggle');
         const darkModeIcon = document.getElementById('darkModeIcon');
         const darkModeText = document.getElementById('darkModeText');
@@ -411,7 +415,7 @@
             }
         });
 
-        // SCROLL TO TOP BUTTON (unchanged from previous version)
+        // --- SCROLL TO TOP BUTTON ---
         const scrollToTopBtn = document.getElementById('scrollToTopBtn');
 
         window.onscroll = function() {
@@ -429,18 +433,17 @@
             });
         });
 
-        // ACCORDION / TOGGLE FUNCTIONALITY
+        // --- ACCORDION / TOGGLE FUNCTIONALITY FOR RULES ---
         document.querySelectorAll('.rule-header').forEach(header => {
             header.addEventListener('click', () => {
-                const content = header.nextElementSibling; // Get the next sibling, which is the description wrapper
+                const content = header.nextElementSibling;
                 const isExpanded = header.getAttribute('aria-expanded') === 'true';
 
-                // Toggle the 'expanded' class on the content wrapper
                 if (isExpanded) {
                     content.classList.remove('expanded');
                     header.setAttribute('aria-expanded', 'false');
                 } else {
-                    // Close any other open descriptions (optional, but good for accordions)
+                    // Ferme toutes les autres règles ouvertes pour un comportement d'accordéon classique
                     document.querySelectorAll('.rule-description-wrapper.expanded').forEach(openContent => {
                         openContent.classList.remove('expanded');
                         openContent.previousElementSibling.setAttribute('aria-expanded', 'false');
