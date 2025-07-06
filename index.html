@@ -1,0 +1,455 @@
+<!DOCTYPE html>
+<html lang="fr" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>📜 Règlement du serveur Discord</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        /* Configuration personnalisée de Tailwind */
+        :root {
+            --primary-light: #7289da; /* Discord blue */
+            --primary-dark: #5865f2; /* Deeper Discord blue */
+            --bg-light: #f7f9fc;
+            --bg-dark: #1e2124; /* Discord dark background */
+            --card-light: #ffffff;
+            --card-dark: #2f3136; /* Discord card background */
+            --text-light: #333333;
+            --text-dark: #dcddde;
+            --border-light: #e0e0e0;
+            --border-dark: #40444b;
+        }
+
+        /* Thème clair par défaut (pour le cas où JS est désactivé ou pour le flash initial) */
+        .light {
+            background-color: var(--bg-light);
+            color: var(--text-light);
+        }
+        .light .bg-card {
+            background-color: var(--card-light);
+        }
+        .light .text-primary {
+            color: var(--primary-light);
+        }
+        .light .text-secondary {
+            color: var(--primary-dark);
+        }
+        .light .border-section {
+            border-color: var(--border-light);
+        }
+        .light .rule-header {
+            background-color: #f1f3f4; /* Light gray for rule header background */
+        }
+        .light .rule-description-wrapper {
+            background-color: #fcfcfc; /* Slightly lighter than card for content */
+        }
+
+        /* Thème sombre */
+        .dark {
+            background-color: var(--bg-dark);
+            color: var(--text-dark);
+        }
+        .dark .bg-card {
+            background-color: var(--card-dark);
+        }
+        .dark .text-primary {
+            color: var(--primary-light);
+        }
+        .dark .text-secondary {
+            color: var(--primary-dark);
+        }
+        .dark .border-section {
+            border-color: var(--border-dark);
+        }
+        .dark .rule-header {
+            background-color: #3b3d42; /* Darker gray for rule header background */
+        }
+        .dark .rule-description-wrapper {
+            background-color: #2a2c30; /* Slightly lighter than card for content */
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            transition: background-color 0.3s ease, color 0.3s ease;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 2rem 0;
+        }
+        .container {
+            max-width: 900px;
+            width: 95%;
+        }
+        h1 .emoji {
+            font-size: 1.1em;
+            margin-right: 10px;
+        }
+        h2 {
+            cursor: pointer; /* Indique que c'est cliquable */
+            user-select: none; /* Empêche la sélection du texte */
+            display: flex;
+            align-items: center;
+            justify-content: space-between; /* Pour pousser l'icône de flèche à droite */
+        }
+        h2 .emoji {
+            font-size: 1.6em;
+            margin-right: 12px;
+            min-width: 30px;
+            text-align: center;
+        }
+        .rule-header {
+            padding: 1rem 1.5rem;
+            border-radius: 8px;
+            transition: background-color 0.2s ease, border-color 0.2s ease;
+            border: 1px solid transparent; /* Pour une transition de bordure plus douce */
+        }
+        .rule-header:hover {
+            border-color: var(--primary-light); /* Met en évidence au survol */
+        }
+
+        .arrow-icon {
+            transition: transform 0.3s ease;
+            font-size: 1.2em;
+        }
+        .rule-header[aria-expanded="true"] .arrow-icon {
+            transform: rotate(90deg); /* Tourne la flèche quand ouvert */
+        }
+
+        .rule-description-wrapper {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.4s ease-out, padding 0.4s ease-out; /* Animation pour l'ouverture */
+            padding: 0 1.5rem; /* Padding horizontal constant */
+            border-radius: 0 0 8px 8px; /* Coins arrondis en bas */
+            margin-top: -8px; /* Pour se coller au header */
+            box-shadow: inset 0 3px 6px rgba(0,0,0,0.05); /* Ombre interne discrète */
+        }
+        .rule-description-wrapper.expanded {
+            max-height: 500px; /* Grande valeur pour couvrir tout le contenu possible */
+            padding: 1rem 1.5rem; /* Padding vertical quand ouvert */
+            padding-left: calc(1.5rem + 4px); /* Pour la barre verticale */
+        }
+        .rule-description {
+            position: relative;
+        }
+        .rule-description::before {
+            content: '';
+            position: absolute;
+            left: -1.5rem; /* Décalé par rapport au padding du wrapper */
+            top: 0;
+            bottom: 0;
+            width: 4px;
+            background-color: var(--primary-light); /* Couleur de la barre plus visible */
+            border-radius: 2px;
+        }
+        .rule-description p {
+            margin-bottom: 0; /* Pas de marge en bas du paragraphe interne */
+        }
+
+
+        /* Styles pour le bouton "Scroll to Top" */
+        #scrollToTopBtn {
+            display: none;
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            z-index: 99;
+            font-size: 24px;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background-color: var(--primary-light);
+            color: white;
+            border: none;
+            cursor: pointer;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+            transition: background-color 0.3s, transform 0.2s;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        #scrollToTopBtn:hover {
+            background-color: var(--primary-dark);
+            transform: translateY(-2px);
+        }
+
+        /* Styles pour le bouton Dark/Light Mode */
+        #darkModeToggle {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 100;
+            background-color: var(--card-light);
+            color: var(--text-light);
+            border: 1px solid var(--border-light);
+            border-radius: 9999px;
+            padding: 0.5rem 0.75rem;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 0.9rem;
+            font-weight: 600;
+            transition: background-color 0.3s, color 0.3s, border-color 0.3s;
+        }
+        .dark #darkModeToggle {
+            background-color: var(--card-dark);
+            color: var(--text-dark);
+            border-color: var(--border-dark);
+        }
+        #darkModeToggle:hover {
+            opacity: 0.9;
+        }
+    </style>
+</head>
+<body class="bg-bg-light text-text-light dark:bg-bg-dark dark:text-text-dark">
+
+    <button id="darkModeToggle" class="bg-white text-gray-800 dark:bg-gray-800 dark:text-gray-200 border border-gray-300 dark:border-gray-600 rounded-full py-2 px-4 flex items-center gap-2 shadow-md">
+        <span id="darkModeIcon">☀️</span> <span id="darkModeText">Clair</span>
+    </button>
+
+    <div class="container bg-card-light text-text-light dark:bg-card-dark dark:text-text-dark p-8 md:p-12 rounded-xl shadow-2xl transition-all duration-300 ease-in-out">
+        <h1 class="text-primary text-4xl md:text-5xl font-extrabold text-center mb-10 flex items-center justify-center">
+            <span class="emoji">📜</span> Règlement du serveur Discord
+        </h1>
+
+        <p class="text-lg text-center mb-10 text-gray-700 dark:text-gray-300">
+            Merci de lire et respecter ces règles afin de garantir une ambiance saine et respectueuse pour tous sur notre serveur.
+        </p>
+
+        <div class="space-y-4">
+            <div class="rule-item border border-border-light dark:border-border-dark rounded-xl overflow-hidden">
+                <div class="rule-header flex items-center cursor-pointer p-4 transition-colors duration-200" role="button" aria-expanded="false" aria-controls="rule1-content">
+                    <h2 class="text-secondary text-xl md:text-2xl font-semibold flex-grow flex items-center m-0">
+                        <span class="emoji">🚫</span> 1. Pas de spam
+                    </h2>
+                    <span class="arrow-icon text-secondary">▶️</span>
+                </div>
+                <div id="rule1-content" class="rule-description-wrapper transition-all duration-400 ease-out">
+                    <div class="rule-description pt-2 pb-4">
+                        <p class="text-gray-600 dark:text-gray-400">Aucun spam n’est autorisé : messages répétés, emojis abusifs, mentions multiples ou spam vocal (soundboard, cris, etc.). Gardons les conversations claires !</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="rule-item border border-border-light dark:border-border-dark rounded-xl overflow-hidden">
+                <div class="rule-header flex items-center cursor-pointer p-4 transition-colors duration-200" role="button" aria-expanded="false" aria-controls="rule2-content">
+                    <h2 class="text-secondary text-xl md:text-2xl font-semibold flex-grow flex items-center m-0">
+                        <span class="emoji">❌</span> 2. Aucune insulte, haine ou provocation
+                    </h2>
+                    <span class="arrow-icon text-secondary">▶️</span>
+                </div>
+                <div id="rule2-content" class="rule-description-wrapper">
+                    <div class="rule-description pt-2 pb-4">
+                        <p class="text-gray-600 dark:text-gray-400">Les propos injurieux, moqueurs ou toxiques, même "légers", sont strictement interdits. Le respect mutuel est notre priorité absolue.</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="rule-item border border-border-light dark:border-border-dark rounded-xl overflow-hidden">
+                <div class="rule-header flex items-center cursor-pointer p-4 transition-colors duration-200" role="button" aria-expanded="false" aria-controls="rule3-content">
+                    <h2 class="text-secondary text-xl md:text-2xl font-semibold flex-grow flex items-center m-0">
+                        <span class="emoji">📢</span> 3. Pas de publicité sans autorisation
+                    </h2>
+                    <span class="arrow-icon text-secondary">▶️</span>
+                </div>
+                <div id="rule3-content" class="rule-description-wrapper">
+                    <div class="rule-description pt-2 pb-4">
+                        <p class="text-gray-600 dark:text-gray-400">Ne partagez aucun lien, invitation ou promotion de serveurs/projets sans l’accord explicite d’un modérateur. Contactez le staff si vous avez une demande.</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="rule-item border border-border-light dark:border-border-dark rounded-xl overflow-hidden">
+                <div class="rule-header flex items-center cursor-pointer p-4 transition-colors duration-200" role="button" aria-expanded="false" aria-controls="rule4-content">
+                    <h2 class="text-secondary text-xl md:text-2xl font-semibold flex-grow flex items-center m-0">
+                        <span class="emoji">🔒</span> 4. Respect de la vie privée
+                    </h2>
+                    <span class="arrow-icon text-secondary">▶️</span>
+                </div>
+                <div id="rule4-content" class="rule-description-wrapper">
+                    <div class="rule-description pt-2 pb-4">
+                        <p class="text-gray-600 dark:text-gray-400">Ne partagez aucune information personnelle (la vôtre ou celle des autres) sur le serveur. Le doxxing, les enregistrements sans consentement et autres atteintes à la vie privée sont formellement prohibés.</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="rule-item border border-border-light dark:border-border-dark rounded-xl overflow-hidden">
+                <div class="rule-header flex items-center cursor-pointer p-4 transition-colors duration-200" role="button" aria-expanded="false" aria-controls="rule5-content">
+                    <h2 class="text-secondary text-xl md:text-2xl font-semibold flex-grow flex items-center m-0">
+                        <span class="emoji">📘</span> 5. Conditions d'utilisation de Discord
+                    </h2>
+                    <span class="arrow-icon text-secondary">▶️</span>
+                </div>
+                <div id="rule5-content" class="rule-description-wrapper">
+                    <div class="rule-description pt-2 pb-4">
+                        <p class="text-gray-600 dark:text-gray-400">Vous devez respecter en tout temps les règles officielles de Discord et leurs directives communautaires. Elles complètent notre règlement.</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="rule-item border border-border-light dark:border-border-dark rounded-xl overflow-hidden">
+                <div class="rule-header flex items-center cursor-pointer p-4 transition-colors duration-200" role="button" aria-expanded="false" aria-controls="rule6-content">
+                    <h2 class="text-secondary text-xl md:text-2xl font-semibold flex-grow flex items-center m-0">
+                        <span class="emoji">⚖️</span> 6. Respect de la loi
+                    </h2>
+                    <span class="arrow-icon text-secondary">▶️</span>
+                </div>
+                <div id="rule6-content" class="rule-description-wrapper">
+                    <div class="rule-description pt-2 pb-4">
+                        <p class="text-gray-600 dark:text-gray-400">Tout comportement ou contenu illégal (incitation à la haine, piratage, menaces, diffusion de contenus illicites, etc.) est interdit et sera signalé aux autorités compétentes.</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="rule-item border border-border-light dark:border-border-dark rounded-xl overflow-hidden">
+                <div class="rule-header flex items-center cursor-pointer p-4 transition-colors duration-200" role="button" aria-expanded="false" aria-controls="rule7-content">
+                    <h2 class="text-secondary text-xl md:text-2xl font-semibold flex-grow flex items-center m-0">
+                        <span class="emoji">🔞</span> 7. Contenu inapproprié interdit
+                    </h2>
+                    <span class="arrow-icon text-secondary">▶️</span>
+                </div>
+                <div id="rule7-content" class="rule-description-wrapper">
+                    <div class="rule-description pt-2 pb-4">
+                        <p class="text-gray-600 dark:text-gray-400">Aucun contenu NSFW (Not Safe For Work), choquant, gore, raciste, sexiste ou politique extrême n’est autorisé sur le serveur, même en messages privés entre membres du serveur.</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="rule-item border border-border-light dark:border-border-dark rounded-xl overflow-hidden">
+                <div class="rule-header flex items-center cursor-pointer p-4 transition-colors duration-200" role="button" aria-expanded="false" aria-controls="rule8-content">
+                    <h2 class="text-secondary text-xl md:text-2xl font-semibold flex-grow flex items-center m-0">
+                        <span class="emoji">➗</span> 8. Utilisez les salons correctement
+                    </h2>
+                    <span class="arrow-icon text-secondary">▶️</span>
+                </div>
+                <div id="rule8-content" class="rule-description-wrapper">
+                    <div class="rule-description pt-2 pb-4">
+                        <p class="text-gray-600 dark:text-gray-400">Respectez la fonction de chaque salon de discussion. Ne postez pas n’importe quoi, n’importe où. Lisez les descriptions des salons si besoin pour savoir où poster.</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="rule-item border border-border-light dark:border-border-dark rounded-xl overflow-hidden">
+                <div class="rule-header flex items-center cursor-pointer p-4 transition-colors duration-200" role="button" aria-expanded="false" aria-controls="rule9-content">
+                    <h2 class="text-secondary text-xl md:text-2xl font-semibold flex-grow flex items-center m-0">
+                        <span class="emoji">👮</span> 9. Respectez les décisions du staff
+                    </h2>
+                    <span class="arrow-icon text-secondary">▶️</span>
+                </div>
+                <div id="rule9-content" class="rule-description-wrapper">
+                    <div class="rule-description pt-2 pb-4">
+                        <p class="text-gray-600 dark:text-gray-400">Les modérateurs et administrateurs sont là pour faire respecter les règles et maintenir l'ordre. Toute tentative de contournement ou manque de respect envers l'équipe sera sanctionnée.</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="rule-item border border-border-light dark:border-border-dark rounded-xl overflow-hidden">
+                <div class="rule-header flex items-center cursor-pointer p-4 transition-colors duration-200" role="button" aria-expanded="false" aria-controls="rule10-content">
+                    <h2 class="text-secondary text-xl md:text-2xl font-semibold flex-grow flex items-center m-0">
+                        <span class="emoji">🧠</span> 10. Comportement mature et civilisé
+                    </h2>
+                    <span class="arrow-icon text-secondary">▶️</span>
+                </div>
+                <div id="rule10-content" class="rule-description-wrapper">
+                    <div class="rule-description pt-2 pb-4">
+                        <p class="text-gray-600 dark:text-gray-400">Les dramas inutiles, les débats stériles, les trolls ou les attitudes toxiques ne sont pas les bienvenus. Ce serveur est un espace d’échange respectueux, pas un champ de bataille.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="mt-12 pt-8 border-t border-border-light dark:border-border-dark text-center text-gray-500 dark:text-gray-400 text-base md:text-lg">
+            <p><span class="emoji">✅</span> En restant sur ce serveur, vous acceptez ce règlement dans son intégralité. En cas de non-respect, des sanctions peuvent être appliquées sans avertissement préalable.</p>
+        </div>
+    </div>
+
+    <button id="scrollToTopBtn" aria-label="Remonter en haut de page">⬆️</button>
+
+    <script>
+        // DARK MODE TOGGLE (unchanged from previous version)
+        const darkModeToggle = document.getElementById('darkModeToggle');
+        const darkModeIcon = document.getElementById('darkModeIcon');
+        const darkModeText = document.getElementById('darkModeText');
+        const htmlElement = document.documentElement;
+
+        function updateToggleButton(isDarkMode) {
+            if (isDarkMode) {
+                darkModeIcon.textContent = '🌙';
+                darkModeText.textContent = 'Sombre';
+            } else {
+                darkModeIcon.textContent = '☀️';
+                darkModeText.textContent = 'Clair';
+            }
+        }
+
+        const savedTheme = localStorage.getItem('theme');
+        if (savedTheme) {
+            htmlElement.classList.add(savedTheme);
+            updateToggleButton(savedTheme === 'dark');
+        } else if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
+            htmlElement.classList.add('dark');
+            updateToggleButton(true);
+        } else {
+            htmlElement.classList.add('light');
+            updateToggleButton(false);
+        }
+
+        darkModeToggle.addEventListener('click', () => {
+            if (htmlElement.classList.contains('dark')) {
+                htmlElement.classList.remove('dark');
+                htmlElement.classList.add('light');
+                localStorage.setItem('theme', 'light');
+                updateToggleButton(false);
+            } else {
+                htmlElement.classList.remove('light');
+                htmlElement.classList.add('dark');
+                localStorage.setItem('theme', 'dark');
+                updateToggleButton(true);
+            }
+        });
+
+        // SCROLL TO TOP BUTTON (unchanged from previous version)
+        const scrollToTopBtn = document.getElementById('scrollToTopBtn');
+
+        window.onscroll = function() {
+            if (document.body.scrollTop > 200 || document.documentElement.scrollTop > 200) {
+                scrollToTopBtn.style.display = "flex";
+            } else {
+                scrollToTopBtn.style.display = "none";
+            }
+        };
+
+        scrollToTopBtn.addEventListener('click', () => {
+            window.scrollTo({
+                top: 0,
+                behavior: 'smooth'
+            });
+        });
+
+        // ACCORDION / TOGGLE FUNCTIONALITY
+        document.querySelectorAll('.rule-header').forEach(header => {
+            header.addEventListener('click', () => {
+                const content = header.nextElementSibling; // Get the next sibling, which is the description wrapper
+                const isExpanded = header.getAttribute('aria-expanded') === 'true';
+
+                // Toggle the 'expanded' class on the content wrapper
+                if (isExpanded) {
+                    content.classList.remove('expanded');
+                    header.setAttribute('aria-expanded', 'false');
+                } else {
+                    // Close any other open descriptions (optional, but good for accordions)
+                    document.querySelectorAll('.rule-description-wrapper.expanded').forEach(openContent => {
+                        openContent.classList.remove('expanded');
+                        openContent.previousElementSibling.setAttribute('aria-expanded', 'false');
+                    });
+                    content.classList.add('expanded');
+                    header.setAttribute('aria-expanded', 'true');
+                }
+            });
+        });
+    </script>
+</body>
+</html>
